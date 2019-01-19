@@ -6,12 +6,13 @@ import 'rxjs/add/operator/map';
 //import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { CanActivate, RouterStateSnapshot } from '@angular/router';
+import { Statement } from '@angular/compiler';
 
 @Injectable(
  /* {
   providedIn: 'root'
 }*/
-)
+) 
 export class AuthGuard  implements CanActivate{
 
   // Inject AuthService => get auth state
@@ -22,7 +23,7 @@ export class AuthGuard  implements CanActivate{
     return this.auth.user$.map(user => {
       if (user) return true; 
 
-      this.router.navigate(['/login']);  
+      this.router.navigate(['/login'], {queryParams:{returnUrl: state.url}});  
       return false;
     });
   } 

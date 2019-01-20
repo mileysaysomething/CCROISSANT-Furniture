@@ -19,7 +19,7 @@ export class CategoryService {
       .list('/categories', ref => ref.orderByChild('name'))
       .snapshotChanges()
       .pipe(
-        map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() })))
+        map(actions => actions.map(a => ({ key: a.key, ...a.payload.val() }),))
       );
 
   }

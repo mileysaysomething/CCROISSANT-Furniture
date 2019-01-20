@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 //import * as firebase from 'firebase';
 //import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
+import { AppUser } from '../models/app-user';
 
 @Component({
   selector: 'bs-navbar', //'app-bs-navbar' Removed 'app'-> not neccesary.
@@ -14,13 +15,16 @@ export class BsNavbarComponent {
   // Define Observable
   //user$: Observable< firebase.User  >;
 
+  appUser: AppUser;
+
   //private afAuth: AngularFireAuth
-  constructor(public auth: AuthService) {
+  constructor(private auth: AuthService) {
 
     //observablle
     //afAuth.authState.subscribe((user => this.user=user));
-
     //this.user$ = afAuth.authState;
+    
+    auth.appUser$.subscribe((appUser => this.appUser = appUser));
    }
 
   

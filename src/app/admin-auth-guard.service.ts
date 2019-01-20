@@ -22,11 +22,14 @@ export class AdminAuthGuard implements CanActivate {
     return this.auth.user$
       .switchMap(user => this.userService.get(user.uid))
       .map(appUser => appUser.isAdmin);
-    */
+    
       return this.auth.user$.pipe(
         switchMap(user => this.userService.get(user.uid)),
         map((appUser: AppUser) => appUser.isAdmin)
+       
       )
-      
+       */
+      return this.auth.appUser$
+        .map(appUser => appUser.isAdmin);
   }
 }

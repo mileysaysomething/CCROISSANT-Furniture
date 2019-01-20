@@ -18,7 +18,7 @@
          <td>{{ p.price | currency: 'USD':'symbol'}}</td>
          <td>{{ p.category | titlecase }}</td>
          <td>
-             <a [routerLink]="['/admin/products', p.key]">Edit</a>
+             <a [routerLink]="['/admin/products', p.$key]">Edit</a>
          </td>
      </tr>
 </tbody>

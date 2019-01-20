@@ -1,7 +1,10 @@
 <p>
     <button routerLink="/admin/products/new" class="btn btn-primary">New Product</button>
 </p>
-
+<input 
+    #query
+    (keyup)="filter(query.value)"
+    type="text" class="form-control" placeholder="Search...">
 <table class="table">
     <thead>
         <th>Product ID</th>
@@ -12,7 +15,7 @@
     </thead>
 
 <tbody>
-     <tr *ngFor=" let p of products$ | async">
+     <tr *ngFor=" let p of filteredProducts">
          <td>{{ p.productId }}</td>
          <td>{{ p.title }}</td>
          <td>{{ p.price | currency: 'USD':'symbol'}}</td>

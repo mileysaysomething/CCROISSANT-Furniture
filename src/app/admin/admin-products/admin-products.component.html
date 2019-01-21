@@ -5,9 +5,37 @@
     #query
     (keyup)="filter(query.value)"
     type="text" class="form-control" placeholder="Search...">
-<table class="table">
+    <data-table
+        [items] = "items"
+        [itemCount] = "itemCount"
+        (reload)= "reloadItems($events)">
+
+    <data-table-column
+        [property] = "'title'"
+        [header] = "'Title'"
+        [sortable] = "true"
+        [resizable] = "true">
+    </data-table-column>
+    <data-table-column
+        [property] = "'price'"
+        [header] = "'Price'"
+        [sortable] = "true"
+        [resizable] = "true">
+        <ng-template #dataTableCell let-item="item">
+            {{ item.price | currency:'CAD': true }}
+        </ng-template>
+       </data-table-column>
+       <data-table-column
+       [property] = "'$key'">
+       <ng-template #dataTableCell let-item="item">
+        <a [routerLink]="['/admin/products', item.key]"> Edit </a>
+       </ng-template>
+      </data-table-column>
+
+    </data-table>
+      <!--
+          <table class="table">
     <thead>
-        <th>Product ID</th>
         <th>Title</th>
         <th>Price</th>
         <th>Category</th>
@@ -16,13 +44,13 @@
 
 <tbody>
      <tr *ngFor=" let p of filteredProducts">
-         <td>{{ p.productId }}</td>
          <td>{{ p.title }}</td>
          <td>{{ p.price | currency: 'USD':'symbol'}}</td>
          <td>{{ p.category | titlecase }}</td>
          <td>
-             <a [routerLink]="['/admin/products', p.$key]">Edit</a>
+            
          </td>
-     </tr>
-</tbody>
-</table>
+        </tr>
+   </tbody>
+   </table>
+      -->

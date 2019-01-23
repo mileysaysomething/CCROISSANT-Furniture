@@ -3,7 +3,6 @@ import { CategoryService } from 'src/app/category.service';
 import { ProductService } from 'src/app/product.service';
 import { Router, ActivatedRoute } from '@angular/router';
  //only can take one element, auto un-subsribe
-import 'rxjs/add/operator/take'; 
 import { take } from 'rxjs/operators';
 
 @Component({

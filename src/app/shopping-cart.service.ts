@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { Product } from './models/product';
 
-@Injectable({
-  providedIn: 'root'
-})
+import { map, take } from 'rxjs/operators';
+//import 'rxjs/add/operator/take';
+
+@Injectable()
 export class ShoppingCartService {
 
   constructor(private  db:AngularFireDatabase) { }
@@ -18,19 +20,36 @@ export class ShoppingCartService {
     return this.db.object('/shopping-carts' + cartId);
   }
 
-  private getOrCreateCart(){
+  private async getOrCreateCartId(){
 
     let cartId = localStorage.getItem('cartId');
     if(!cartId){
-      //let result = await this.create();
+      //async, the same as in C#
+      let result = await this.create(); 
+      localStorage.setItem('cartId',result.key);
+      /*
       this.create().then(result =>{
-        localStorage.setItem('cartId',result.key);
-
-        return this.getCart(result.key);
-      });
+        localStorage.setItem('cartId',result.key);}
+      */
+        return result.key; ///return this.getCart(result.key);
     }else{
-      return this.getCart(cartId);
-
+      return cartId; //return this.getCart(cartId);
     }
+  }
+
+  async addToCart (product:Product){
+    const cartId = await this.getOrCreateCartId();
+
+    const item = this.db.object('/shopping-carts/' + cartId + '/items/' + product.key);
+
+    item.snapshotChanges().pipe(take(1)).subscribe((i: any) => {
+    console.log(i);
+
+    if (i.payload.val()) { item.update({
+       product:product, quantity: i.payload.val().quantity + 1 });
+    
+      } else {item.set({ product:product, quantity: 1 }); }
+
+    });
   }
 }

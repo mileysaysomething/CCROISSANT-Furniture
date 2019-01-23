@@ -20,6 +20,9 @@ export class ShoppingCartService {
     return this.db.object('/shopping-carts' + cartId);
   }
 
+  private getItem(cartId:string, productId:string){
+    return this.db.object('/shopping-carts/' + cartId + '/items/' + productId);
+  }
   private async getOrCreateCartId(){
 
     let cartId = localStorage.getItem('cartId');
@@ -40,15 +43,15 @@ export class ShoppingCartService {
   async addToCart (product:Product){
     const cartId = await this.getOrCreateCartId();
 
-    const item = this.db.object('/shopping-carts/' + cartId + '/items/' + product.key);
+    const item = this.getItem(cartId, product.key);
 
     item.snapshotChanges().pipe(take(1)).subscribe((i: any) => {
     console.log(i);
-
-    if (i.payload.val()) { item.update({
+    // If item.quanity not exist, won't show a number
+   // item.update({product:product, quantity:((i.payload.val().quantity) || 0) + 1});
+   if (i.payload.val()) { item.update({
        product:product, quantity: i.payload.val().quantity + 1 });
-    
-      } else {item.set({ product:product, quantity: 1 }); }
+      } else {item.set({ product:product, quantity: 1 }); } 
 
     });
   }

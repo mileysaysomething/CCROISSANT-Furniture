@@ -11,11 +11,25 @@ export class ProductCardComponent {
   
   @Input('product') product:Product;
   @Input('show-actions') showActions=true;
+  @Input('shopping-cart') shoppingCart;
 
   constructor(private shoppingCartService:ShoppingCartService) { }
 
-  addToCart(product:Product){
-    this.shoppingCartService.addToCart(product);
+  addToCart(){
+    this.shoppingCartService.addToCart(this.product);
+  }
+
+  removeFromCart(){
+    this.shoppingCartService.removeFromCart(this.product);
+  }
+  getQuantity(){
+
+      if(!this.shoppingCart) return 0;
+     
+      if(this.shoppingCart){ let item = this.shoppingCart.item[this.product.key];
+      return item.payload.val().quantity;}
+    
+  
   }
 
 }

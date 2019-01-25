@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Product } from './models/product';
 
-import { map, take } from 'rxjs/operators';
+import {take } from 'rxjs/operators';
 //import 'rxjs/add/operator/take';
 
 @Injectable()
@@ -16,14 +16,15 @@ export class ShoppingCartService {
     });
   }
 
-  private getCart(cartId:string){
+  async getCart(){
+    let cartId = await this.getOrCreateCartId(); //string not a promise
     return this.db.object('/shopping-carts' + cartId);
   }
 
   private getItem(cartId:string, productId:string){
     return this.db.object('/shopping-carts/' + cartId + '/items/' + productId);
   }
-  private async getOrCreateCartId(){
+  private async getOrCreateCartId():Promise<string>{
 
     let cartId = localStorage.getItem('cartId');
     if(!cartId){
@@ -42,17 +43,29 @@ export class ShoppingCartService {
 
   async addToCart (product:Product){
     const cartId = await this.getOrCreateCartId();
+    const item$ = this.getItem(cartId, product.key);
 
-    const item = this.getItem(cartId, product.key);
-
-    item.snapshotChanges().pipe(take(1)).subscribe((i: any) => {
-    console.log(i);
+    item$.snapshotChanges().pipe(take(1)).subscribe((item: any) => {
+    console.log(item);
     // If item.quanity not exist, won't show a number
    // item.update({product:product, quantity:((i.payload.val().quantity) || 0) + 1});
-   if (i.payload.val()) { item.update({
-       product:product, quantity: i.payload.val().quantity + 1 });
-      } else {item.set({ product:product, quantity: 1 }); } 
-
+   if (item.payload.val()) { item$.update({
+       product:product, quantity: item.payload.val().quantity + 1 });
+      } else {item$.set({ product:product, quantity: 1 }); } 
     });
   }
+  async removeFromCart(product:Product){
+    const cartId = await this.getOrCreateCartId();
+    const item$ = this.getItem(cartId, product.key);
+
+    item$.snapshotChanges().pipe(take(1)).subscribe((item: any) => {
+    console.log(item);
+    // If item.quanity not exist, won't show a number
+   // item.update({product:product, quantity:((i.payload.val().quantity) || 0) + 1});
+   if (item.payload.val()) { item$.update({
+       product:product, quantity: item.payload.val().quantity - 1 });
+      } else {item$.set({ product:product, quantity: 1 }); } 
+    });
+  }
+
 }

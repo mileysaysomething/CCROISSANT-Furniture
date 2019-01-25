@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Product } from '../models/product';
 import { ShoppingCartService } from '../shopping-cart.service';
+import { ShoppingCart } from '../models/shopping-cart';
 
 @Component({
   selector: 'product-card',
@@ -24,12 +25,14 @@ export class ProductCardComponent {
   }
   getQuantity(){
 
+      
       if(!this.shoppingCart) return 0;
      
-      if(this.shoppingCart){ let item = this.shoppingCart.item[this.product.key];
-      return item.payload.val().quantity;}
-    
-  
+      if(this.shoppingCart){const item = this.shoppingCart[this.product.key];
+      return item ? item.payload.val().quantity:0}
+
   }
+
+
 
 }

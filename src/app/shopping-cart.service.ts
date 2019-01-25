@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireDatabase, AngularFireObject } from 'angularfire2/database';
 import { Product } from './models/product';
-
-import {take } from 'rxjs/operators';
+import {take, map } from 'rxjs/operators';
+import { ShoppingCart } from './models/shopping-cart';
+import { Observable } from 'rxjs';
 //import 'rxjs/add/operator/take';
 
 @Injectable()
@@ -16,17 +17,24 @@ export class ShoppingCartService {
     });
   }
 
-  async getCart(){
-    let cartId = await this.getOrCreateCartId(); //string not a promise
-    return this.db.object('/shopping-carts' + cartId);
+  async getCart():Promise<Observable<ShoppingCart>>{
+    const cartId = await this.getOrCreateCartId(); //string not a promise
+    //return this.db.object('/shopping-carts' + cartId);
+    return this.db
+    .object('/shopping-carts/' + cartId)
+    .snapshotChanges()
+    .pipe(map((x: any) => new ShoppingCart(x.payload.val().items)));
+
   }
 
   private getItem(cartId:string, productId:string){
     return this.db.object('/shopping-carts/' + cartId + '/items/' + productId);
   }
+
   private async getOrCreateCartId():Promise<string>{
 
     let cartId = localStorage.getItem('cartId');
+    //localStorage.removeItem('cartId');
     if(!cartId){
       //async, the same as in C#
       let result = await this.create(); 
@@ -53,7 +61,6 @@ export class ShoppingCartService {
     const item$ = this.getItem(cartId, product.key);
 
     item$.snapshotChanges().pipe(take(1)).subscribe((item: any) => {
-    console.log(item);
     // If item.quanity not exist, won't show a number
    // item.update({product:product, quantity:((i.payload.val().quantity) || 0) + 1});
    if (item.payload.val()) { item$.update({

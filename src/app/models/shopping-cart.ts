@@ -1,4 +1,5 @@
 import { ShoppingCartItem } from './shopping-cart-item';
+import { Product } from './product';
 
 export class ShoppingCart{
     items:ShoppingCartItem[]=[]; //assign when use push()
@@ -11,7 +12,13 @@ export class ShoppingCart{
       }
     
     } 
-
+    getQuantity(product:Product){
+       
+        const item = this.itemsMap[product.key];
+        return item ? item.quantity:0;
+  
+    }
+  
    // get productIds(){
      // return Object.keys(this.itemsMap);
     //}

@@ -7,9 +7,8 @@
     <thead>
       <tr>
         <th>Product</th>
-        <th>Price</th>
         <th>Quantity</th>
-        <th>Total Price</th>
+        <th>Price</th>
       </tr>
     </thead>
     <tbody>
@@ -17,11 +16,8 @@
         <td>
           {{ item.product.title}}
         </td>
-        <td>{{ item.product.price  | currency:'CAD':true }}</td>
         <td>
-         <!-- {{ item.quantity}}-->
-         <product-quantity  [product]="item.product"  [shopping-cart]="cart"></product-quantity>
-
+         <product-quantity [product]="item.product" [shopping-cart] = "cart"></product-quantity>
         </td>
         <td>
           {{ item.totalPrice | currency:'CAD':true }}
@@ -32,12 +28,8 @@
       <tr>
         <th>Total Price:</th>
         <th></th>
-        <th></th>
         <th>{{ cart.totalPrice | currency:'CAD':true }}</th>
       </tr>
     </tfoot>
   </table>
-  <button class="btn btn-danger sm" (click)="clearCart()">
-     Clear Shopping Cart
-  </button>
 </ng-container>

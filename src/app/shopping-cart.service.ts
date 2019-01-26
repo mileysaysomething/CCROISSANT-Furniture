@@ -4,6 +4,7 @@ import { Product } from './models/product';
 import {take, map } from 'rxjs/operators';
 import { ShoppingCart } from './models/shopping-cart';
 import { Observable } from 'rxjs';
+import { Title } from '@angular/platform-browser';
 //import 'rxjs/add/operator/take';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class ShoppingCartService {
       createdDate: new Date().getTime()
     });
   }
+  
 
   async getCart():Promise<Observable<ShoppingCart>>{
     const cartId = await this.getOrCreateCartId(); //string not a promise
@@ -24,7 +26,6 @@ export class ShoppingCartService {
     .object('/shopping-carts/' + cartId)
     .snapshotChanges()
     .pipe(map((x: any) => new ShoppingCart(x.payload.val().items)));
-
   }
 
   private getItem(cartId:string, productId:string){
@@ -48,15 +49,18 @@ export class ShoppingCartService {
       return cartId; //return this.getCart(cartId);
     }
   }
-
+  async clearCart(){
+    const cartId = await this.getOrCreateCartId();
+    this.db.object('/shopping-carts/' + cartId + '/items').remove();
+  }
   async addToCart (product:Product){
-    this.updateItemQuantity(product, 1);
+    this.updateItem(product, 1);
   }
   async removeFromCart(product:Product){
-    this.updateItemQuantity(product, -1);
+    this.updateItem(product, -1);
   }
-
-  private async updateItemQuantity(product:Product, change:number){
+  
+  private async updateItem(product:Product, change:number){
     const cartId = await this.getOrCreateCartId();
     const item$ = this.getItem(cartId, product.key);
 
@@ -64,7 +68,11 @@ export class ShoppingCartService {
     // If item.quanity not exist, won't show a number
    // item.update({product:product, quantity:((i.payload.val().quantity) || 0) + 1});
    if (item.payload.val()) { item$.update({
-       product:product, quantity: item.payload.val().quantity + change });
+       //product:product,
+       title:product.title,
+       imageUrl:product.imageUrl,
+       price:product.price,
+        quantity: item.payload.val().quantity + change });
       } else {item$.set({ product:product, quantity: 1 }); } 
     });
   }

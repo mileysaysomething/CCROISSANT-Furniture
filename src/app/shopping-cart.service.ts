@@ -67,12 +67,15 @@ export class ShoppingCartService {
     item$.snapshotChanges().pipe(take(1)).subscribe((item: any) => {
     // If item.quanity not exist, won't show a number
    // item.update({product:product, quantity:((i.payload.val().quantity) || 0) + 1});
-   if (item.payload.val()) { item$.update({
-       //product:product,
-       title:product.title,
-       imageUrl:product.imageUrl,
-       price:product.price,
-        quantity: item.payload.val().quantity + change });
+   if (item.payload.val()) {
+     let quantity = item.payload.val().quantity + change;
+      if(quantity === 0) item$.remove();
+      else item$.update({
+         //product:product,
+        title:product.title,
+        imageUrl:product.imageUrl,
+        price:product.price,
+        quantity: quantity });
       } else {item$.set({ product:product, quantity: 1 }); } 
     });
   }

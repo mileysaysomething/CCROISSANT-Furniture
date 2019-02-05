@@ -6,20 +6,28 @@
   <table class="table">
     <thead>
       <tr>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Price</th>
+        <th style="width:150px;"></th>
+        <th style="width:200px;">Product</th>
+        <th style="width:200px;">Price</th>
+        <th class="text-center"style="width:200px;">Quantity</th>
+        <th class="text-right"style="width:200px;">Total Price</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor=" let item of cart.items">
         <td>
-          {{ item.product.title}}
+          <div [style.backgroundImage]="'url(' + item.imageUrl + ')'" class="thumbnail" ></div>
         </td>
         <td>
+          {{ item.product.title }}
+        </td>
+        <td>
+          {{ item.product.price | currency:'CAD':true}}
+        </td>
+        <td class="text-center">
          <product-quantity [product]="item.product" [shopping-cart] = "cart"></product-quantity>
         </td>
-        <td>
+        <td class="text-right">
           {{ item.totalPrice | currency:'CAD':true }}
         </td>
       </tr>
@@ -28,7 +36,9 @@
       <tr>
         <th>Total Price:</th>
         <th></th>
-        <th>{{ cart.totalPrice | currency:'CAD':true }}</th>
+        <th></th>
+        <th></th>
+        <th class="text-right">{{ cart.totalPrice | currency:'CAD':true }}</th>
       </tr>
     </tfoot>
   </table>

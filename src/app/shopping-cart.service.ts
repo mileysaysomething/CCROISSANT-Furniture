@@ -63,21 +63,47 @@ export class ShoppingCartService {
   private async updateItem(product:Product, change:number){
     const cartId = await this.getOrCreateCartId();
     const item$ = this.getItem(cartId, product.key);
-
+    
     item$.snapshotChanges().pipe(take(1)).subscribe((item: any) => {
     // If item.quanity not exist, won't show a number
    // item.update({product:product, quantity:((i.payload.val().quantity) || 0) + 1});
-   if (item.payload.val()) {
-     let quantity = item.payload.val().quantity + change;
-      if(quantity === 0) item$.remove();
-      else item$.update({
-         //product:product,
-        title:product.title,
-        imageUrl:product.imageUrl,
-        price:product.price,
-        quantity: quantity });
+   if (item.payload.val()) { item$.update({
+       //product:product,
+       title:product.title,
+       imageUrl:product.imageUrl,
+       price:product.price,
+      quantity: item.payload.val().quantity + change });
       } else {item$.set({ product:product, quantity: 1 }); } 
     });
+    /*
+   item$
+      .valueChanges()
+      .pipe(take(1))
+      .subscribe((item:any) => {
+        let quantity =
+          ((item && item.quantity) || 0) + change;
+        if (quantity === 0) item$.remove();
+        else
+          item$.update({
+            title: product.title,
+            imageUrl: product.imageUrl,
+            price: product.price,
+            quantity:quantity
+          });
+      });
+      
+     if (item.payload.val()) { item$.update({
+      //product:product, quantity: item.payload.val().quantity + change });
+      //product:product,
+      title:product.title,
+      imageUrl:product.imageUrl,
+      price:product.price,
+       quantity: item.payload.val().quantity + change });
+     } else {item$.set({ product:product, quantity: 1 }); } 
+
+     */
+      
+    
   }
 
 }
